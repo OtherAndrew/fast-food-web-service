@@ -55,14 +55,14 @@ router.get("/", (request, response, next) => {
 
     pool.query(query, values, (error, results) => {
         if (error) throw error;
-        if (results.rowCount > 0) {
+        if (results.length === 0) {
             response.send({
-                success: true,
-                stores: results
+                message: "No stores found."
             });
         } else {
             response.send({
-                message: "No stores found."
+                success: true,
+                stores: results
             });
         }
     });
