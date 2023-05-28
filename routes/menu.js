@@ -97,7 +97,7 @@ router.get("/combos", (request, response) => {
 
 router.get("/vegetarian", (request, response) => {
     const query =
-        'SELECT ItemName\n' +
+        'SELECT ItemName, ItemName, Price\n' +
         'FROM Items\n' +
         'WHERE ItemNumber IN (\n' +
         '    SELECT ItemNumber\n' +
@@ -116,7 +116,7 @@ router.get("/vegetarian", (request, response) => {
 
 router.get("/vegan", (request, response) => {
     const query =
-        'SELECT ItemName\n' +
+        'SELECT ItemName, ItemName, Price\n' +
         'FROM Items\n' +
         'WHERE ItemNumber IN (\n' +
         '    SELECT ItemNumber\n' +
