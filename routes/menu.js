@@ -95,5 +95,43 @@ router.get("/combos", (request, response) => {
     });
 });
 
+router.get("/vegetarian", (request, response) => {
+    const query =
+        'SELECT ItemName\n' +
+        'FROM Items\n' +
+        'WHERE ItemNumber IN (\n' +
+        '    SELECT ItemNumber\n' +
+        '    FROM ItemNutrition\n' +
+        '    WHERE Vegetarian = 1)\n' +
+        'ORDER BY ItemNumber';
+
+    pool.query(query, (error, results) => {
+        if (error) throw error;
+        response.send({
+            success: true,
+            items: results
+        });
+    });
+});
+
+router.get("/vegan", (request, response) => {
+    const query =
+        'SELECT ItemName\n' +
+        'FROM Items\n' +
+        'WHERE ItemNumber IN (\n' +
+        '    SELECT ItemNumber\n' +
+        '    FROM ItemNutrition\n' +
+        '    WHERE Vegan = 1)\n' +
+        'ORDER BY ItemNumber';
+
+    pool.query(query, (error, results) => {
+        if (error) throw error;
+        response.send({
+            success: true,
+            items: results
+        });
+    });
+});
+
 
 module.exports = router;
