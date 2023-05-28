@@ -16,6 +16,12 @@ const router = express.Router();
  *
  * @apiSuccess {Boolean} success      Request success.
  * @apiSuccess {Object[]} orders      List of orders.
+ * @apiSuccess {Number} OrderNumber   Order number.
+ * @apiSuccess {Number} StoreNumber   Store order was placed at.
+ * @apiSuccess {Number} CustomerID    Customer order belongs to.
+ * @apiSuccess {String} PickupMethod  Pickup method of order.
+ * @apiSuccess {String} PaymentMethod Payment method of order.
+ * @apiSuccess {String} OrderTime     Time order was placed.
  */
 router.get("/", (request, response, next) => {
     if (request.query.ordernumber) {
