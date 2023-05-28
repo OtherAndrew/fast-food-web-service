@@ -7,7 +7,7 @@ const pool = require('../utilities/exports').pool;
 const router = express.Router();
 
 router.get("/", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName FROM Items ORDER BY ItemNumber';
+    const query = 'SELECT ItemNumber, ItemName, Price FROM Items ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
@@ -31,7 +31,7 @@ router.get("/entrees", (request, response) => {
 });
 
 router.get("/sides", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM SideItems) ORDER BY ItemNumber';
+    const query = 'SELECT ItemNumber, ItemName, Price FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM SideItems) ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
@@ -43,7 +43,7 @@ router.get("/sides", (request, response) => {
 });
 
 router.get("/drinks", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM DrinkItems) ORDER BY ItemNumber';
+    const query = 'SELECT ItemNumber, ItemName, Price FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM DrinkItems) ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
@@ -55,7 +55,7 @@ router.get("/drinks", (request, response) => {
 });
 
 router.get("/limited", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM LimitedItems) ORDER BY ItemNumber';
+    const query = 'SELECT ItemNumber, ItemName, Price FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM LimitedItems) ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
@@ -67,7 +67,7 @@ router.get("/limited", (request, response) => {
 });
 
 router.get("/breakfast", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM BreakfastItems) ORDER BY ItemNumber';
+    const query = 'SELECT ItemNumber, ItemName, Price FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM BreakfastItems) ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
@@ -80,7 +80,7 @@ router.get("/breakfast", (request, response) => {
 
 router.get("/combos", (request, response) => {
     const query =
-        'SELECT Items.ItemNumber, Items.ItemName, Combos.EntreeItemNumber, Combos.SideItemNumber, Combos.DrinkItemNumber\n' +
+        'SELECT Items.ItemNumber, Items.ItemName, Price, Combos.EntreeItemNumber, Combos.SideItemNumber, Combos.DrinkItemNumber\n' +
         'FROM Items\n' +
         'INNER JOIN Combos ON Items.ItemNumber = Combos.ItemNumber\n' +
         'WHERE Items.ItemNumber IN (SELECT ItemNumber FROM Combos)\n' +
