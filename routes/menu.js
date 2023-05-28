@@ -234,5 +234,4 @@ router.get("/vegan", (request, response) => {
     });
 });
 
-
 module.exports = router;

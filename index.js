@@ -10,7 +10,6 @@ const app = express();
 const pool = require("./utilities").pool;
 
 let middleware = require("./middleware");
-const path = require("path");
 
 /*
  * This middleware function parses JASOn in the body of POST requests
@@ -24,6 +23,8 @@ app.use(express.json());
 app.use(middleware.jsonErrorInBody);
 
 app.use('/menu', require('./routes/menu'));
+
+app.use('/stores', require('./routes/stores'));
 
 /*
  * Return HTML for the / end point.
