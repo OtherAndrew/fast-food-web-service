@@ -1,22 +1,18 @@
 {
-  "name": "450-lab",
+  "name": "445-project",
   "version": "1.0.0",
-  "description": "TCSS 450 Lab for creating a web service",
+  "description": "TCSS 445 project web service",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cfb3/tcss-450-web-service-starter"
+    "url": "https://github.com/OtherAndrew/fast-food-web-service"
   },
   "scripts": {
     "dev": "export NODE_ENV=dev|| set NODE_ENV=dev&& node index.js",
     "local": "export NODE_ENV=local|| set NODE_ENV=local&& node index.js"
   },
-  "keywords": [
-    "TCSS450",
-    "Mobile",
-    "Apps"
-  ],
-  "author": "TCSS 450",
+  "keywords": [],
+  "author": "TCSS 455",
   "license": "MIT",
   "dependencies": {
     "dotenv": "^16.0.3",

@@ -22,6 +22,8 @@ app.use(express.json());
  */
 app.use(middleware.jsonErrorInBody);
 
+app.use('/menu', require('./routes/menu'));
+
 /*
  * Return HTML for the / end point.
  * This is a nice location to document your web service API
