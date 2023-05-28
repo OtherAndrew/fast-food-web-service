@@ -26,6 +26,8 @@ app.use('/menu', require('./routes/menu'));
 
 app.use('/stores', require('./routes/stores'));
 
+app.use('/orders', require('./routes/orders'));
+
 /*
  * Return HTML for the / end point.
  * This is a nice location to document your web service API
