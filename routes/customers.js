@@ -10,7 +10,7 @@ const router = express.Router();
 /**
  * @api {get} /customers Request customer information.
  * @apiName GetCustomers
- * @apiGroup Stores
+ * @apiGroup Customers
  *
  * @apiParam {Number} id (Optional) The customer to find.
  *
