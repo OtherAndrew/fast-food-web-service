@@ -189,7 +189,8 @@ router.get("/combos", (request, response) => {
         'FROM (SELECT * FROM (Items NATURAL JOIN Combos)) c1\n' +
         '    LEFT JOIN Items i1 ON c1.EntreeItemNumber = i1.ItemNumber\n' +
         '    LEFT JOIN Items i2 ON c1.SideItemNumber = i2.ItemNumber\n' +
-        '    LEFT JOIN Items i3 ON c1.DrinkItemNumber = i3.ItemNumber';
+        '    LEFT JOIN Items i3 ON c1.DrinkItemNumber = i3.ItemNumber\n' +
+        'ORDER BY ComboNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
