@@ -28,7 +28,8 @@ app.use('/stores', require('./routes/stores'));
 
 app.use('/customers', require('./routes/customers'));
 
-app.use('/orders', require('./routes/orders'));
+app.use('/orders', require('./routes/queryOrders'));
+app.use('/orders', require('./routes/editOrders'));
 
 /*
  * Return HTML for the / end point.
