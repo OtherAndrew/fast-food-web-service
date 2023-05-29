@@ -66,7 +66,7 @@ router.get("/", (request, response, next) => {
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/entrees", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM EntreeItems) ORDER BY ItemNumber';
+    const query = 'SELECT ItemNumber, ItemName, Price FROM Items NATURAL JOIN EntreeItems ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
@@ -89,7 +89,7 @@ router.get("/entrees", (request, response) => {
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/sides", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM SideItems) ORDER BY ItemNumber';
+    const query = 'SELECT ItemNumber, ItemName, Price FROM Items NATURAL JOIN SideItems ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
@@ -112,7 +112,7 @@ router.get("/sides", (request, response) => {
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/drinks", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM DrinkItems) ORDER BY ItemNumber';
+    const query = 'SELECT ItemNumber, ItemName, Price FROM Items NATURAL JOIN DrinkItems ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
@@ -135,7 +135,7 @@ router.get("/drinks", (request, response) => {
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/limited", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM LimitedItems) ORDER BY ItemNumber';
+    const query = 'SELECT ItemNumber, ItemName, Price FROM Items NATURAL JOIN LimitedItems ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
@@ -158,7 +158,7 @@ router.get("/limited", (request, response) => {
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/breakfast", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM BreakfastItems) ORDER BY ItemNumber';
+    const query = 'SELECT ItemNumber, ItemName, Price FROM Items NATURAL JOIN BreakfastItems ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
