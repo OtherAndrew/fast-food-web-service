@@ -18,6 +18,7 @@ const router = express.Router();
  * @apiParam {String} paymentMethod The order payment method.
  *
  * @apiSuccess {Boolean} success Request success.
+ * @apiSuccess {Number} orderNumber The order number.
  *
  * @apiError (400: Missing Parameters) {String}  message "Missing required information."
  * @apiError (400: Malformed Parameter) {String} message "Malformed parameter(s)."
@@ -122,11 +123,9 @@ router.post('/', (request, response, next) => {
 
     pool.query(query, values, (error, result) => {
         if (error) throw error;
-        console.log(result.insertId)
-        console.log("sdsdfsdf")
         response.send({
             success: true,
-            orderID: result.insertId
+            orderNumber: result.insertId
         });
     });
 });
