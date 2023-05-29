@@ -80,7 +80,7 @@ router.get("/items", (request, response, next) => {
     if (request.query.orderNumber) {
         next();
     } else {
-        const query = 'SELECT * FROM OrderItems ORDER BY OrderNumber';
+        const query = 'SELECT * FROM OrderItems NATURAL JOIN Items ORDER BY OrderNumber';
 
         pool.query(query, (error, results) => {
             if (error) throw error;
@@ -91,7 +91,7 @@ router.get("/items", (request, response, next) => {
         });
     }
 }, (request, response) => {
-    const query = 'SELECT * FROM OrderItems WHERE OrderNumber = ?';
+    const query = 'SELECT * FROM OrderItems NATURAL JOIN Items WHERE OrderNumber = ?';
     const values = [parseInt(request.query.orderNumber)];
 
     pool.query(query, values, (error, results) => {
