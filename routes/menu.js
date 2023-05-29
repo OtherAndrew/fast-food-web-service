@@ -174,27 +174,28 @@ router.get("/breakfast", (request, response) => {
  * @apiName GetCombos
  * @apiGroup Menu
  *
- * @apiSuccess {Boolean} success         Request success.
- * @apiSuccess {Object[]} items          List of items.
- * @apiSuccess {Number} ItemNumber       Item number.
- * @apiSuccess {String} ItemName         Item name.
- * @apiSuccess {Number} Price            Item price.
- * @apiSuccess {Number} EntreeItemNumber Entree item number.
- * @apiSuccess {Number} SideItemNumber   Side item number.
- * @apiSuccess {Number} DrinkItemNumber  Drink item number.
+ * @apiSuccess {Boolean} success    Request success.
+ * @apiSuccess {Object[]} combos    List of combos.
+ * @apiSuccess {Number} ComboNumber Combo number.
+ * @apiSuccess {String} ComboName   Combo name.
+ * @apiSuccess {String} Entree      Entree item name.
+ * @apiSuccess {String} Side        Side item name.
+ * @apiSuccess {String} Drink       Drink item name.
+ * @apiSuccess {Number} Price       Combo price.
  */
 router.get("/combos", (request, response) => {
     const query =
-        'SELECT Items.ItemNumber, Items.ItemName, Price, Combos.EntreeItemNumber, Combos.SideItemNumber, Combos.DrinkItemNumber\n' +
-        'FROM Items INNER JOIN Combos ON Items.ItemNumber = Combos.ItemNumber\n' +
-        'WHERE Items.ItemNumber IN (SELECT ItemNumber FROM Combos)\n' +
-        'ORDER BY Items.ItemNumber';
+        'SELECT c1.ItemNumber AS ComboNumber, c1.ItemName AS ComboName, i1.ItemName AS Entree, i2.ItemName as Side, i3.ItemName as Drink, c1.Price\n' +
+        'FROM (SELECT * FROM (Items NATURAL JOIN Combos)) c1\n' +
+        '    LEFT JOIN Items i1 ON c1.EntreeItemNumber = i1.ItemNumber\n' +
+        '    LEFT JOIN Items i2 ON c1.SideItemNumber = i2.ItemNumber\n' +
+        '    LEFT JOIN Items i3 ON c1.DrinkItemNumber = i3.ItemNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
         response.send({
             success: true,
-            items: results
+            combos: results
         });
     });
 });
