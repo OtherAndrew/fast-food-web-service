@@ -21,15 +21,23 @@ const router = express.Router();
  * @apiSuccess {String} PickupMethod  Pickup method of order.
  * @apiSuccess {String} PaymentMethod Payment method of order.
  * @apiSuccess {String} OrderTime     Time order was placed.
+ * @apiSuccess {Number} OrderTotal    Total cost of order.
  *
  * @apiError (404: Order Not Found) {String} message "No orders found."
  */
 router.get("/", (request, response, next) => {
     if (request.query.orderNumber) {
-        request.query.orderNumber = parseInt(request.query.orderNumber);
         next();
     } else {
-        const query = 'SELECT * FROM Orders ORDER BY OrderNumber';
+        const query =
+            'SELECT * \n' +
+            'FROM Orders\n' +
+            '    NATURAL JOIN (\n' +
+            '        SELECT OrderNumber, SUM(Price * Quantity) AS OrderTotal\n' +
+            '        FROM OrderItems NATURAL JOIN Items\n' +
+            '        GROUP BY OrderNumber\n' +
+            '    ) OrderTotals\n' +
+            'ORDER BY OrderNumber';
 
         pool.query(query, (error, results) => {
             if (error) throw error;
@@ -40,8 +48,16 @@ router.get("/", (request, response, next) => {
         });
     }
 }, (request, response) => {
-    const query = 'SELECT * FROM Orders WHERE OrderNumber = ?';
-    const values = [request.query.orderNumber];
+    const query =
+        'SELECT * \n' +
+        'FROM Orders\n' +
+        '    NATURAL JOIN (\n' +
+        '        SELECT OrderNumber, SUM(Price * Quantity) AS OrderTotal\n' +
+        '        FROM OrderItems NATURAL JOIN Items\n' +
+        '        GROUP BY OrderNumber\n' +
+        '    ) OrderTotals\n' +
+        'WHERE OrderNumber = ?';
+    const values = [parseInt(request.query.orderNumber)];
 
     pool.query(query, values, (error, results) => {
         if (error) throw error;
@@ -192,7 +208,7 @@ router.delete('/cancel', (request, response, next) => {
     });
 }, (request, response, next) => {
     const query = 'DELETE FROM OrderItems WHERE OrderNumber = ?';
-    const values = [request.query.orderNumber];
+    const values = [parseInt(request.query.orderNumber)];
 
     pool.query(query, values, (error) => {
         if (error) throw error;
@@ -200,7 +216,7 @@ router.delete('/cancel', (request, response, next) => {
     });
 }, (request, response) => {
     const query = 'DELETE FROM Orders WHERE OrderNumber = ?'
-    const values = [request.query.orderNumber];
+    const values = [parseInt(request.query.orderNumber)];
 
     pool.query(query, values, (error) => {
         if (error) throw error;
