@@ -7,25 +7,50 @@ const pool = require('../utilities/exports').pool;
 const router = express.Router();
 
 /**
- * @api {get} /menu Request all items on the menu.
+ * @api {get} /menu Request items on the menu.
  * @apiName GetMenu
  * @apiGroup Menu
+ *
+ * @apiParam {Number} itemNumber (Optional) The item to look up.
  *
  * @apiSuccess {Boolean} success   Request success.
  * @apiSuccess {Object[]} items    List of items.
  * @apiSuccess {Number} ItemNumber Item number.
  * @apiSuccess {String} ItemName   Item name.
  * @apiSuccess {Number} Price      Item price.
+ *
+ * @apiError (404: Item Not Found) {String} message "No items found."
  */
-router.get("/", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items ORDER BY ItemNumber';
+router.get("/", (request, response, next) => {
+    if (request.query.itemNumber) {
+        next();
+    } else {
+        const query = 'SELECT ItemNumber, ItemName, Price FROM Items ORDER BY ItemNumber';
 
-    pool.query(query, (error, results) => {
-        if (error) throw error;
-        response.send({
-            success: true,
-            items: results
+        pool.query(query, (error, results) => {
+            if (error) throw error;
+            response.send({
+                success: true,
+                items: results
+            });
         });
+    }
+}, (request, response) => {
+    const query = 'SELECT ItemNumber, ItemName, Price FROM Items WHERE ItemNumber = ?';
+    const values = [parseInt(request.query.itemNumber)];
+
+    pool.query(query, values, (error, results) => {
+        if (error) throw error;
+        if (results.length === 0) {
+            response.status(404).send({
+                message: "No items found."
+            });
+        } else {
+            response.send({
+                success: true,
+                orders: results
+            });
+        }
     });
 });
 

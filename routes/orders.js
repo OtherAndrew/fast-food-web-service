@@ -78,7 +78,6 @@ router.get("/", (request, response, next) => {
  */
 router.get("/items", (request, response, next) => {
     if (request.query.orderNumber) {
-        request.query.orderNumber = parseInt(request.query.orderNumber);
         next();
     } else {
         const query = 'SELECT * FROM OrderItems ORDER BY OrderNumber';
@@ -93,7 +92,7 @@ router.get("/items", (request, response, next) => {
     }
 }, (request, response) => {
     const query = 'SELECT * FROM OrderItems WHERE OrderNumber = ?';
-    const values = [request.query.orderNumber];
+    const values = [parseInt(request.query.orderNumber)];
 
     pool.query(query, values, (error, results) => {
         if (error) throw error;
@@ -131,7 +130,6 @@ router.get("/items", (request, response, next) => {
  */
 router.get("/customer", (request, response, next) => {
     if (request.query.id) {
-        request.query.id = parseInt(request.query.id);
         next();
     } else {
         response.status(400).send({
@@ -140,7 +138,7 @@ router.get("/customer", (request, response, next) => {
     }
 }, (request, response) => {
     const query = 'SELECT * FROM Orders WHERE CustomerID = ? ORDER BY OrderNumber';
-    const values = [request.query.id];
+    const values = [parseInt(request.query.id)];
 
     pool.query(query, values, (error, results) => {
         if (error) throw error;
@@ -175,12 +173,11 @@ router.delete('/cancel', (request, response, next) => {
             message: "Missing required information."
         });
     } else {
-        request.query.orderNumber = parseInt(request.query.orderNumber);
         next();
     }
 }, (request, response, next) => {
     const query = 'SELECT * FROM OrderItems WHERE OrderNumber = ?';
-    const values = [request.query.orderNumber];
+    const values = [parseInt(request.query.orderNumber)];
 
     pool.query(query, values, (error, results) => {
         if (error) throw error;
