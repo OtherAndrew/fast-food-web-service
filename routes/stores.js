@@ -21,6 +21,8 @@ const router = express.Router();
  * @apiSuccess {String} City          Store city.
  * @apiSuccess {Number} ZIP           Store ZIP.
  * @apiSuccess {String} State         Store state.
+ *
+ * @apiError (404: Store Not Found) {String} message "No stores found."
  */
 router.get("/", (request, response, next) => {
     if (isStringProvided(request.query.city)) {
@@ -56,7 +58,7 @@ router.get("/", (request, response, next) => {
     pool.query(query, values, (error, results) => {
         if (error) throw error;
         if (results.length === 0) {
-            response.send({
+            response.status(404).send({
                 message: "No stores found."
             });
         } else {
