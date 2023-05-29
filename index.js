@@ -26,6 +26,8 @@ app.use('/menu', require('./routes/menu'));
 
 app.use('/stores', require('./routes/stores'));
 
+app.use('/customers', require('./routes/customers'));
+
 app.use('/orders', require('./routes/orders'));
 
 /*
