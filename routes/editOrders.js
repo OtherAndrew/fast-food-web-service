@@ -161,7 +161,7 @@ router.post('/item', (request, response, next) => {
         response.status(400).send({
             message: "Malformed parameter. modifications must be a non-empty string."
         });
-    }else {
+    } else {
         next();
     }
 }, (request, response, next) => {
