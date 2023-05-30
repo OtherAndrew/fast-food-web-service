@@ -56,6 +56,46 @@ router.get("/", (request, response, next) => {
 });
 
 /**
+ * @api {post} /customers Request to add a new customer.
+ * @apiName AddCustomer
+ * @apiGroup Customers
+ *
+ * @apiParam {String} name The customer's name.
+ *
+ * @apiSuccess {Boolean} success   Request success.
+ * @apiSuccess {Number} customerID Customer ID.
+ *
+ * @apiError (400: Missing Parameters) {String} message  "Missing required information."
+ * @apiError (400: Malformed Parameter) {String} message "Malformed parameter."
+ */
+router.post("/", (request, response, next) => {
+    if (!request.body.name) {
+        response.status(400).send({
+            message: "Missing required information."
+        });
+    } else if (!isStringProvided(request.body.name)) {
+        response.status(400).send({
+            message: "Malformed parameter."
+        });
+    } else {
+        next();
+    }
+}, (request, response) => {
+    const query =
+        'INSERT INTO Customers (Name) ' +
+        'VALUES (?)';
+    const values = [request.body.name];
+
+    pool.query(query, values, (error, results) => {
+        if (error) throw error;
+        response.send({
+            success: true,
+            customerID: results.insertId
+        });
+    });
+});
+
+/**
  * @api {get} /customers/address Request customer addresses.
  * @apiName GetCustomerAddress
  * @apiGroup Customers
