@@ -21,6 +21,7 @@ const router = express.Router();
  * @apiSuccess {String} City          Store city.
  * @apiSuccess {Number} ZIP           Store ZIP.
  * @apiSuccess {String} State         Store state.
+ * @apiSuccess {String} Country       Store country.
  *
  * @apiError (404: Store Not Found) {String} message "No stores found."
  */
@@ -29,7 +30,7 @@ router.get("/stores", (request, response, next) => {
         next();
     } else {
         const query =
-            'SELECT StoreNumber, StreetAddress, City, ZIP, State ' +
+            'SELECT StoreNumber, StreetAddress, City, ZIP, State, Country ' +
             'FROM StoreBranch ' +
             '    NATURAL JOIN Address ' +
             'ORDER BY StoreNumber';
@@ -44,7 +45,7 @@ router.get("/stores", (request, response, next) => {
     }
 }, (request, response) => {
     const query =
-        'SELECT StoreNumber, StreetAddress, City, ZIP, State ' +
+        'SELECT StoreNumber, StreetAddress, City, ZIP, State, Country ' +
         'FROM StoreBranch  ' +
         '    NATURAL JOIN Address ' +
         'WHERE City = ? ' +
