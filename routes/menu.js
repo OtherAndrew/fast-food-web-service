@@ -17,6 +17,7 @@ const router = express.Router();
  * @apiSuccess {Object[]} items    List of items.
  * @apiSuccess {Number} ItemNumber Item number.
  * @apiSuccess {String} ItemName   Item name.
+ * @apiSuccess {Number} Calories   Item calories.
  * @apiSuccess {Number} Price      Item price.
  *
  * @apiError (404: Item Not Found) {String} message "No items found."
@@ -69,6 +70,7 @@ router.get("/", (request, response, next) => {
  * @apiSuccess {Object[]} items    List of items.
  * @apiSuccess {Number} ItemNumber Item number.
  * @apiSuccess {String} ItemName   Item name.
+ * @apiSuccess {Number} Calories   Item calories.
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/entrees", (request, response) => {
@@ -94,6 +96,7 @@ router.get("/entrees", (request, response) => {
  * @apiSuccess {Object[]} items    List of items.
  * @apiSuccess {Number} ItemNumber Item number.
  * @apiSuccess {String} ItemName   Item name.
+ * @apiSuccess {Number} Calories   Item calories.
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/sides", (request, response) => {
@@ -119,6 +122,7 @@ router.get("/sides", (request, response) => {
  * @apiSuccess {Object[]} items    List of items.
  * @apiSuccess {Number} ItemNumber Item number.
  * @apiSuccess {String} ItemName   Item name.
+ * @apiSuccess {Number} Calories   Item calories.
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/drinks", (request, response) => {
@@ -144,6 +148,7 @@ router.get("/drinks", (request, response) => {
  * @apiSuccess {Object[]} items    List of items.
  * @apiSuccess {Number} ItemNumber Item number.
  * @apiSuccess {String} ItemName   Item name.
+ * @apiSuccess {Number} Calories   Item calories.
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/limited", (request, response) => {
@@ -169,12 +174,40 @@ router.get("/limited", (request, response) => {
  * @apiSuccess {Object[]} items    List of items.
  * @apiSuccess {Number} ItemNumber Item number.
  * @apiSuccess {String} ItemName   Item name.
+ * @apiSuccess {Number} Calories   Item calories.
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/breakfast", (request, response) => {
     const query =
         'SELECT ItemNumber, ItemName, Calories, Price ' +
         'FROM Items NATURAL JOIN BreakfastItems NATURAL JOIN ItemNutrition ' +
+        'ORDER BY ItemNumber';
+
+    pool.query(query, (error, results) => {
+        if (error) throw error;
+        response.send({
+            success: true,
+            items: results
+        });
+    });
+});
+
+/**
+ * @api {get} /menu/rewards Request all reward items on the menu.
+ * @apiName GetBreakfast
+ * @apiGroup Menu
+ *
+ * @apiSuccess {Boolean} success   Request success.
+ * @apiSuccess {Object[]} items    List of items.
+ * @apiSuccess {Number} ItemNumber Item number.
+ * @apiSuccess {String} ItemName   Item name.
+ * @apiSuccess {Number} Calories   Item calories.
+ * @apiSuccess {Number} PointCost  Item point cost.
+ */
+router.get("/breakfast", (request, response) => {
+    const query =
+        'SELECT ItemNumber, ItemName, Calories, PointCost ' +
+        'FROM Items NATURAL JOIN RewardItems NATURAL JOIN ItemNutrition ' +
         'ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
@@ -198,6 +231,7 @@ router.get("/breakfast", (request, response) => {
  * @apiSuccess {String} Entree      Entree item name.
  * @apiSuccess {String} Side        Side item name.
  * @apiSuccess {String} Drink       Drink item name.
+ * @apiSuccess {Number} Calories    Combo calories.
  * @apiSuccess {Number} Price       Combo price.
  */
 router.get("/combos", (request, response) => {
@@ -227,6 +261,7 @@ router.get("/combos", (request, response) => {
  * @apiSuccess {Object[]} items    List of items.
  * @apiSuccess {Number} ItemNumber Item number.
  * @apiSuccess {String} ItemName   Item name.
+ * @apiSuccess {Number} Calories   Item calories.
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/vegetarian", (request, response) => {
@@ -254,6 +289,7 @@ router.get("/vegetarian", (request, response) => {
  * @apiSuccess {Object[]} items    List of items.
  * @apiSuccess {Number} ItemNumber Item number.
  * @apiSuccess {String} ItemName   Item name.
+ * @apiSuccess {Number} Calories   Item calories.
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/vegan", (request, response) => {
