@@ -21,16 +21,18 @@ const router = express.Router();
  * @apiSuccess {String} City          Store city.
  * @apiSuccess {Number} ZIP           Store ZIP.
  * @apiSuccess {String} State         Store state.
+ *
+ * @apiError (404: Store Not Found) {String} message "No stores found."
  */
 router.get("/", (request, response, next) => {
     if (isStringProvided(request.query.city)) {
         next();
     } else {
         const query =
-            'SELECT StoreBranch.StoreNumber, Address.StreetAddress, Address.City, Address.ZIP, Address.State\n' +
+            'SELECT StoreNumber, StreetAddress, City, ZIP, State\n' +
             'FROM StoreBranch\n' +
-            '    INNER JOIN Address ON StoreBranch.AddressID = Address.AddressID\n' +
-            'ORDER BY StoreBranch.StoreNumber';
+            '    NATURAL JOIN Address\n' +
+            'ORDER BY StoreNumber';
 
         pool.query(query, (error, results) => {
             if (error) throw error;
@@ -42,21 +44,18 @@ router.get("/", (request, response, next) => {
     }
 }, (request, response) => {
     const query =
-        'SELECT StoreBranch.StoreNumber, Address.StreetAddress, Address.City, Address.ZIP, Address.State\n' +
-        'FROM StoreBranch\n' +
-        '    INNER JOIN Address ON StoreBranch.AddressID = Address.AddressID\n' +
-        'WHERE StoreBranch.AddressID IN (\n' +
-        '    SELECT AddressID\n' +
-        '    FROM Address\n' +
-        '    WHERE City = ?\n' +
-        ')\n' +
-        'ORDER BY StoreBranch.StoreNumber';
+        'SELECT StoreNumber, StreetAddress, City, ZIP, State\n' +
+        'FROM StoreBranch \n' +
+        '    NATURAL JOIN Address\n' +
+        'WHERE City = ?\n' +
+        'ORDER BY StoreNumber';
+
     const values = [request.query.city];
 
     pool.query(query, values, (error, results) => {
         if (error) throw error;
         if (results.length === 0) {
-            response.send({
+            response.status(404).send({
                 message: "No stores found."
             });
         } else {

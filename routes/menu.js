@@ -7,25 +7,50 @@ const pool = require('../utilities/exports').pool;
 const router = express.Router();
 
 /**
- * @api {get} /menu Request all items on the menu.
+ * @api {get} /menu Request items on the menu.
  * @apiName GetMenu
  * @apiGroup Menu
+ *
+ * @apiParam {Number} itemNumber (Optional) The item to look up.
  *
  * @apiSuccess {Boolean} success   Request success.
  * @apiSuccess {Object[]} items    List of items.
  * @apiSuccess {Number} ItemNumber Item number.
  * @apiSuccess {String} ItemName   Item name.
  * @apiSuccess {Number} Price      Item price.
+ *
+ * @apiError (404: Item Not Found) {String} message "No items found."
  */
-router.get("/", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items ORDER BY ItemNumber';
+router.get("/", (request, response, next) => {
+    if (request.query.itemNumber) {
+        next();
+    } else {
+        const query = 'SELECT ItemNumber, ItemName, Price FROM Items ORDER BY ItemNumber';
 
-    pool.query(query, (error, results) => {
-        if (error) throw error;
-        response.send({
-            success: true,
-            items: results
+        pool.query(query, (error, results) => {
+            if (error) throw error;
+            response.send({
+                success: true,
+                items: results
+            });
         });
+    }
+}, (request, response) => {
+    const query = 'SELECT ItemNumber, ItemName, Price FROM Items WHERE ItemNumber = ?';
+    const values = [parseInt(request.query.itemNumber)];
+
+    pool.query(query, values, (error, results) => {
+        if (error) throw error;
+        if (results.length === 0) {
+            response.status(404).send({
+                message: "No items found."
+            });
+        } else {
+            response.send({
+                success: true,
+                orders: results
+            });
+        }
     });
 });
 
@@ -41,7 +66,7 @@ router.get("/", (request, response) => {
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/entrees", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM EntreeItems) ORDER BY ItemNumber';
+    const query = 'SELECT ItemNumber, ItemName, Price FROM Items NATURAL JOIN EntreeItems ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
@@ -64,7 +89,7 @@ router.get("/entrees", (request, response) => {
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/sides", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM SideItems) ORDER BY ItemNumber';
+    const query = 'SELECT ItemNumber, ItemName, Price FROM Items NATURAL JOIN SideItems ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
@@ -87,7 +112,7 @@ router.get("/sides", (request, response) => {
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/drinks", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM DrinkItems) ORDER BY ItemNumber';
+    const query = 'SELECT ItemNumber, ItemName, Price FROM Items NATURAL JOIN DrinkItems ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
@@ -110,7 +135,7 @@ router.get("/drinks", (request, response) => {
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/limited", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM LimitedItems) ORDER BY ItemNumber';
+    const query = 'SELECT ItemNumber, ItemName, Price FROM Items NATURAL JOIN LimitedItems ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
@@ -133,7 +158,7 @@ router.get("/limited", (request, response) => {
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/breakfast", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items WHERE ItemNumber IN (SELECT ItemNumber FROM BreakfastItems) ORDER BY ItemNumber';
+    const query = 'SELECT ItemNumber, ItemName, Price FROM Items NATURAL JOIN BreakfastItems ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
@@ -149,27 +174,29 @@ router.get("/breakfast", (request, response) => {
  * @apiName GetCombos
  * @apiGroup Menu
  *
- * @apiSuccess {Boolean} success         Request success.
- * @apiSuccess {Object[]} items          List of items.
- * @apiSuccess {Number} ItemNumber       Item number.
- * @apiSuccess {String} ItemName         Item name.
- * @apiSuccess {Number} Price            Item price.
- * @apiSuccess {Number} EntreeItemNumber Entree item number.
- * @apiSuccess {Number} SideItemNumber   Side item number.
- * @apiSuccess {Number} DrinkItemNumber  Drink item number.
+ * @apiSuccess {Boolean} success    Request success.
+ * @apiSuccess {Object[]} combos    List of combos.
+ * @apiSuccess {Number} ComboNumber Combo number.
+ * @apiSuccess {String} ComboName   Combo name.
+ * @apiSuccess {String} Entree      Entree item name.
+ * @apiSuccess {String} Side        Side item name.
+ * @apiSuccess {String} Drink       Drink item name.
+ * @apiSuccess {Number} Price       Combo price.
  */
 router.get("/combos", (request, response) => {
     const query =
-        'SELECT Items.ItemNumber, Items.ItemName, Price, Combos.EntreeItemNumber, Combos.SideItemNumber, Combos.DrinkItemNumber\n' +
-        'FROM Items INNER JOIN Combos ON Items.ItemNumber = Combos.ItemNumber\n' +
-        'WHERE Items.ItemNumber IN (SELECT ItemNumber FROM Combos)\n' +
-        'ORDER BY Items.ItemNumber';
+        'SELECT c1.ItemNumber AS ComboNumber, c1.ItemName AS ComboName, i1.ItemName AS Entree, i2.ItemName as Side, i3.ItemName as Drink, c1.Price\n' +
+        'FROM (SELECT * FROM (Items NATURAL JOIN Combos)) c1\n' +
+        '    LEFT JOIN Items i1 ON c1.EntreeItemNumber = i1.ItemNumber\n' +
+        '    LEFT JOIN Items i2 ON c1.SideItemNumber = i2.ItemNumber\n' +
+        '    LEFT JOIN Items i3 ON c1.DrinkItemNumber = i3.ItemNumber\n' +
+        'ORDER BY ComboNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
         response.send({
             success: true,
-            items: results
+            combos: results
         });
     });
 });

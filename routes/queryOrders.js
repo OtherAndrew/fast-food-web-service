@@ -1,6 +1,5 @@
 //express is the framework we're going to use to handle requests
 const express = require('express');
-const {isStringProvided} = require("../utilities/validationUtils");
 
 //Access the connection to Heroku Database
 const pool = require('../utilities/exports').pool;
@@ -12,7 +11,7 @@ const router = express.Router();
  * @apiName GetOrders
  * @apiGroup Orders
  *
- * @apiParam {Number} ordernumber (Optional) The order to look up.
+ * @apiParam {Number} orderNumber (Optional) The order to look up.
  *
  * @apiSuccess {Boolean} success      Request success.
  * @apiSuccess {Object[]} orders      List of orders.
@@ -22,13 +21,23 @@ const router = express.Router();
  * @apiSuccess {String} PickupMethod  Pickup method of order.
  * @apiSuccess {String} PaymentMethod Payment method of order.
  * @apiSuccess {String} OrderTime     Time order was placed.
+ * @apiSuccess {Number} OrderTotal    Total cost of order.
+ *
+ * @apiError (404: Order Not Found) {String} message "No orders found."
  */
 router.get("/", (request, response, next) => {
     if (request.query.orderNumber) {
-        request.query.orderNumber = parseInt(request.query.orderNumber);
         next();
     } else {
-        const query = 'SELECT * FROM Orders ORDER BY OrderNumber';
+        const query =
+            'SELECT * \n' +
+            'FROM Orders\n' +
+            '    NATURAL JOIN (\n' +
+            '        SELECT OrderNumber, SUM(Price * Quantity) AS OrderTotal\n' +
+            '        FROM OrderItems NATURAL JOIN Items\n' +
+            '        GROUP BY OrderNumber\n' +
+            '    ) OrderTotals\n' +
+            'ORDER BY OrderNumber';
 
         pool.query(query, (error, results) => {
             if (error) throw error;
@@ -39,13 +48,21 @@ router.get("/", (request, response, next) => {
         });
     }
 }, (request, response) => {
-    const query = 'SELECT * FROM Orders WHERE OrderNumber = ?';
-    const values = [request.query.orderNumber];
+    const query =
+        'SELECT * \n' +
+        'FROM Orders\n' +
+        '    NATURAL JOIN (\n' +
+        '        SELECT OrderNumber, SUM(Price * Quantity) AS OrderTotal\n' +
+        '        FROM OrderItems NATURAL JOIN Items\n' +
+        '        GROUP BY OrderNumber\n' +
+        '    ) OrderTotals\n' +
+        'WHERE OrderNumber = ?';
+    const values = [parseInt(request.query.orderNumber)];
 
     pool.query(query, values, (error, results) => {
         if (error) throw error;
         if (results.length === 0) {
-            response.send({
+            response.status(404).send({
                 message: "No orders found."
             });
         } else {
@@ -72,13 +89,14 @@ router.get("/", (request, response, next) => {
  * @apiSuccess {String} PickupMethod  Pickup method of order.
  * @apiSuccess {String} PaymentMethod Payment method of order.
  * @apiSuccess {String} OrderTime     Time order was placed.
+ *
+ * @apiError (404: Item Not Found) {String} message "No items found."
  */
 router.get("/items", (request, response, next) => {
     if (request.query.orderNumber) {
-        request.query.orderNumber = parseInt(request.query.orderNumber);
         next();
     } else {
-        const query = 'SELECT * FROM OrderItems ORDER BY OrderNumber';
+        const query = 'SELECT * FROM OrderItems NATURAL JOIN Items ORDER BY OrderNumber';
 
         pool.query(query, (error, results) => {
             if (error) throw error;
@@ -89,13 +107,13 @@ router.get("/items", (request, response, next) => {
         });
     }
 }, (request, response) => {
-    const query = 'SELECT * FROM OrderItems WHERE OrderNumber = ?';
-    const values = [request.query.orderNumber];
+    const query = 'SELECT * FROM OrderItems NATURAL JOIN Items WHERE OrderNumber = ?';
+    const values = [parseInt(request.query.orderNumber)];
 
     pool.query(query, values, (error, results) => {
         if (error) throw error;
         if (results.length === 0) {
-            response.send({
+            response.status(404).send({
                 message: "No items found."
             });
         } else {
@@ -122,10 +140,12 @@ router.get("/items", (request, response, next) => {
  * @apiSuccess {String} PickupMethod  Pickup method of order.
  * @apiSuccess {String} PaymentMethod Payment method of order.
  * @apiSuccess {String} OrderTime     Time order was placed.
+ *
+ * @apiError (400: Missing Parameters) {String} message "Missing required information."
+ * @apiError (404: Order Not Found) {String} message    "No orders found."
  */
 router.get("/customer", (request, response, next) => {
     if (request.query.id) {
-        request.query.id = parseInt(request.query.id);
         next();
     } else {
         response.status(400).send({
@@ -134,12 +154,12 @@ router.get("/customer", (request, response, next) => {
     }
 }, (request, response) => {
     const query = 'SELECT * FROM Orders WHERE CustomerID = ? ORDER BY OrderNumber';
-    const values = [request.query.id];
+    const values = [parseInt(request.query.id)];
 
     pool.query(query, values, (error, results) => {
         if (error) throw error;
         if (results.length === 0) {
-            response.send({
+            response.status(404).send({
                 message: "No orders found."
             });
         } else {

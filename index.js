@@ -6,6 +6,10 @@ const express = require("express");
 //Create a new instance of express
 const app = express();
 
+const cors = require('cors');
+
+app.use(cors())
+
 //Access the connection to Heroku Database
 const pool = require("./utilities").pool;
 
@@ -26,7 +30,10 @@ app.use('/menu', require('./routes/menu'));
 
 app.use('/stores', require('./routes/stores'));
 
-app.use('/orders', require('./routes/orders'));
+app.use('/customers', require('./routes/customers'));
+
+app.use('/orders', require('./routes/queryOrders'));
+app.use('/orders', require('./routes/editOrders'));
 
 /*
  * Return HTML for the / end point.
