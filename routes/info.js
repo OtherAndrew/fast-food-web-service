@@ -10,7 +10,7 @@ const router = express.Router();
 /**
  * @api {get} /info/stores Request store locations.
  * @apiName GetStores
- * @apiGroup Stores
+ * @apiGroup Info
  *
  * @apiParam {String} city (Optional) The city to find stores in.
  *
@@ -64,6 +64,48 @@ router.get("/stores", (request, response, next) => {
                 stores: results
             });
         }
+    });
+});
+
+/**
+ * @api {get} /info/payment Request payment methods.
+ * @apiName GetPaymentMethods
+ * @apiGroup Info
+ *
+ * @apiSuccess {Boolean} success         Request success.
+ * @apiSuccess {Object[]} paymentMethods List of payment methods.
+ * @apiSuccess {String} Method           The payment method.
+ */
+router.get("/payment", (request, response) => {
+    const query = 'SELECT * FROM PaymentMethod';
+
+    pool.query(query, (error, results) => {
+        if (error) throw error;
+        response.send({
+            success: true,
+            paymentMethods: results
+        });
+    });
+});
+
+/**
+ * @api {get} /info/pickup Request pickup methods.
+ * @apiName GetPickupMethods
+ * @apiGroup Info
+ *
+ * @apiSuccess {Boolean} success        Request success.
+ * @apiSuccess {Object[]} pickupMethods List of pickup methods.
+ * @apiSuccess {String} Method          The pickup method.
+ */
+router.get("/pickup", (request, response) => {
+    const query = 'SELECT * FROM PickupMethod';
+
+    pool.query(query, (error, results) => {
+        if (error) throw error;
+        response.send({
+            success: true,
+            pickupMethods: results
+        });
     });
 });
 
