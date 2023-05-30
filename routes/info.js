@@ -8,7 +8,7 @@ const pool = require('../utilities/exports').pool;
 const router = express.Router();
 
 /**
- * @api {get} /stores Request store locations.
+ * @api {get} /info/stores Request store locations.
  * @apiName GetStores
  * @apiGroup Stores
  *
@@ -24,7 +24,7 @@ const router = express.Router();
  *
  * @apiError (404: Store Not Found) {String} message "No stores found."
  */
-router.get("/", (request, response, next) => {
+router.get("/stores", (request, response, next) => {
     if (isStringProvided(request.query.city)) {
         next();
     } else {

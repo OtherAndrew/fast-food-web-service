@@ -28,7 +28,7 @@ app.use(middleware.jsonErrorInBody);
 
 app.use('/menu', require('./routes/menu'));
 
-app.use('/stores', require('./routes/stores'));
+app.use('/info', require('./routes/info'));
 
 app.use('/customers', require('./routes/customers'));
 
