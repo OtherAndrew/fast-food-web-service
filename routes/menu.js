@@ -25,7 +25,10 @@ router.get("/", (request, response, next) => {
     if (request.query.itemNumber) {
         next();
     } else {
-        const query = 'SELECT ItemNumber, ItemName, Price FROM Items ORDER BY ItemNumber';
+        const query =
+            'SELECT ItemNumber, ItemName, Calories, Price ' +
+            'FROM Items NATURAL JOIN ItemNutrition ' +
+            'ORDER BY ItemNumber';
 
         pool.query(query, (error, results) => {
             if (error) throw error;
@@ -36,7 +39,10 @@ router.get("/", (request, response, next) => {
         });
     }
 }, (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items WHERE ItemNumber = ?';
+    const query =
+        'SELECT ItemNumber, ItemName, Calories, Price ' +
+        'FROM Items NATURAL JOIN ItemNutrition ' +
+        'WHERE ItemNumber = ?';
     const values = [parseInt(request.query.itemNumber)];
 
     pool.query(query, values, (error, results) => {
@@ -66,8 +72,10 @@ router.get("/", (request, response, next) => {
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/entrees", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items NATURAL JOIN EntreeItems ORDER BY ItemNumber';
-
+    const query =
+        'SELECT ItemNumber, ItemName, Calories, Price ' +
+        'FROM Items NATURAL JOIN EntreeItems NATURAL JOIN ItemNutrition ' +
+        'ORDER BY ItemNumber';
     pool.query(query, (error, results) => {
         if (error) throw error;
         response.send({
@@ -89,8 +97,10 @@ router.get("/entrees", (request, response) => {
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/sides", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items NATURAL JOIN SideItems ORDER BY ItemNumber';
-
+    const query =
+        'SELECT ItemNumber, ItemName, Calories, Price ' +
+        'FROM Items NATURAL JOIN SideItems NATURAL JOIN ItemNutrition ' +
+        'ORDER BY ItemNumber';
     pool.query(query, (error, results) => {
         if (error) throw error;
         response.send({
@@ -112,8 +122,10 @@ router.get("/sides", (request, response) => {
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/drinks", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items NATURAL JOIN DrinkItems ORDER BY ItemNumber';
-
+    const query =
+        'SELECT ItemNumber, ItemName, Calories, Price ' +
+        'FROM Items NATURAL JOIN DrinkItems NATURAL JOIN ItemNutrition ' +
+        'ORDER BY ItemNumber';
     pool.query(query, (error, results) => {
         if (error) throw error;
         response.send({
@@ -135,8 +147,10 @@ router.get("/drinks", (request, response) => {
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/limited", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items NATURAL JOIN LimitedItems ORDER BY ItemNumber';
-
+    const query =
+        'SELECT ItemNumber, ItemName, Calories, Price ' +
+        'FROM Items NATURAL JOIN LimitedItems NATURAL JOIN ItemNutrition ' +
+        'ORDER BY ItemNumber';
     pool.query(query, (error, results) => {
         if (error) throw error;
         response.send({
@@ -158,7 +172,10 @@ router.get("/limited", (request, response) => {
  * @apiSuccess {Number} Price      Item price.
  */
 router.get("/breakfast", (request, response) => {
-    const query = 'SELECT ItemNumber, ItemName, Price FROM Items NATURAL JOIN BreakfastItems ORDER BY ItemNumber';
+    const query =
+        'SELECT ItemNumber, ItemName, Calories, Price ' +
+        'FROM Items NATURAL JOIN BreakfastItems NATURAL JOIN ItemNutrition ' +
+        'ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
         if (error) throw error;
@@ -185,11 +202,11 @@ router.get("/breakfast", (request, response) => {
  */
 router.get("/combos", (request, response) => {
     const query =
-        'SELECT c1.ItemNumber AS ComboNumber, c1.ItemName AS ComboName, i1.ItemName AS Entree, i2.ItemName as Side, i3.ItemName as Drink, c1.Price\n' +
-        'FROM (SELECT * FROM (Items NATURAL JOIN Combos)) c1\n' +
-        '    LEFT JOIN Items i1 ON c1.EntreeItemNumber = i1.ItemNumber\n' +
-        '    LEFT JOIN Items i2 ON c1.SideItemNumber = i2.ItemNumber\n' +
-        '    LEFT JOIN Items i3 ON c1.DrinkItemNumber = i3.ItemNumber\n' +
+        'SELECT c1.ItemNumber AS ComboNumber, c1.ItemName AS ComboName, i1.ItemName AS Entree, i2.ItemName as Side, i3.ItemName as Drink, c1.Calories, c1.Price ' +
+        'FROM (SELECT * FROM (Items NATURAL JOIN Combos NATURAL JOIN ItemNutrition )) c1 ' +
+        '    LEFT JOIN Items i1 ON c1.EntreeItemNumber = i1.ItemNumber ' +
+        '    LEFT JOIN Items i2 ON c1.SideItemNumber = i2.ItemNumber ' +
+        '    LEFT JOIN Items i3 ON c1.DrinkItemNumber = i3.ItemNumber ' +
         'ORDER BY ComboNumber';
 
     pool.query(query, (error, results) => {
@@ -214,12 +231,9 @@ router.get("/combos", (request, response) => {
  */
 router.get("/vegetarian", (request, response) => {
     const query =
-        'SELECT ItemNumber, ItemName, Price\n' +
-        'FROM Items\n' +
-        'WHERE ItemNumber IN (\n' +
-        '    SELECT ItemNumber\n' +
-        '    FROM ItemNutrition\n' +
-        '    WHERE Vegetarian = 1)\n' +
+        'SELECT ItemNumber, ItemName, Calories, Price ' +
+        'FROM Items NATURAL JOIN ItemNutrition ' +
+        'WHERE Vegetarian = 1 ' +
         'ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
@@ -244,12 +258,9 @@ router.get("/vegetarian", (request, response) => {
  */
 router.get("/vegan", (request, response) => {
     const query =
-        'SELECT ItemNumber, ItemName, Price\n' +
-        'FROM Items\n' +
-        'WHERE ItemNumber IN (\n' +
-        '    SELECT ItemNumber\n' +
-        '    FROM ItemNutrition\n' +
-        '    WHERE Vegan = 1)\n' +
+        'SELECT ItemNumber, ItemName, Calories, Price ' +
+        'FROM Items NATURAL JOIN ItemNutrition ' +
+        'WHERE Vegan = 1 ' +
         'ORDER BY ItemNumber';
 
     pool.query(query, (error, results) => {
