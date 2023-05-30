@@ -29,9 +29,9 @@ router.get("/stores", (request, response, next) => {
         next();
     } else {
         const query =
-            'SELECT StoreNumber, StreetAddress, City, ZIP, State\n' +
-            'FROM StoreBranch\n' +
-            '    NATURAL JOIN Address\n' +
+            'SELECT StoreNumber, StreetAddress, City, ZIP, State ' +
+            'FROM StoreBranch ' +
+            '    NATURAL JOIN Address ' +
             'ORDER BY StoreNumber';
 
         pool.query(query, (error, results) => {
@@ -44,10 +44,10 @@ router.get("/stores", (request, response, next) => {
     }
 }, (request, response) => {
     const query =
-        'SELECT StoreNumber, StreetAddress, City, ZIP, State\n' +
-        'FROM StoreBranch \n' +
-        '    NATURAL JOIN Address\n' +
-        'WHERE City = ?\n' +
+        'SELECT StoreNumber, StreetAddress, City, ZIP, State ' +
+        'FROM StoreBranch  ' +
+        '    NATURAL JOIN Address ' +
+        'WHERE City = ? ' +
         'ORDER BY StoreNumber';
 
     const values = [request.query.city];

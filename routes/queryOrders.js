@@ -30,13 +30,13 @@ router.get("/", (request, response, next) => {
         next();
     } else {
         const query =
-            'SELECT * \n' +
-            'FROM Orders\n' +
-            '    NATURAL JOIN (\n' +
-            '        SELECT OrderNumber, SUM(Price * Quantity) AS OrderTotal\n' +
-            '        FROM OrderItems NATURAL JOIN Items\n' +
-            '        GROUP BY OrderNumber\n' +
-            '    ) OrderTotals\n' +
+            'SELECT * ' +
+            'FROM Orders ' +
+            '    NATURAL JOIN ( ' +
+            '        SELECT OrderNumber, SUM(Price * Quantity) AS OrderTotal ' +
+            '        FROM OrderItems NATURAL JOIN Items ' +
+            '        GROUP BY OrderNumber ' +
+            '    ) OrderTotals ' +
             'ORDER BY OrderNumber';
 
         pool.query(query, (error, results) => {
@@ -49,13 +49,13 @@ router.get("/", (request, response, next) => {
     }
 }, (request, response) => {
     const query =
-        'SELECT * \n' +
-        'FROM Orders\n' +
-        '    NATURAL JOIN (\n' +
-        '        SELECT OrderNumber, SUM(Price * Quantity) AS OrderTotal\n' +
-        '        FROM OrderItems NATURAL JOIN Items\n' +
-        '        GROUP BY OrderNumber\n' +
-        '    ) OrderTotals\n' +
+        'SELECT * ' +
+        'FROM Orders ' +
+        '    NATURAL JOIN ( ' +
+        '        SELECT OrderNumber, SUM(Price * Quantity) AS OrderTotal ' +
+        '        FROM OrderItems NATURAL JOIN Items ' +
+        '        GROUP BY OrderNumber ' +
+        '    ) OrderTotals ' +
         'WHERE OrderNumber = ?';
     const values = [parseInt(request.query.orderNumber)];
 

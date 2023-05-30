@@ -78,8 +78,8 @@ router.get("/address", (request, response, next) => {
         next();
     } else {
         const query =
-            'SELECT CustomerID, StreetAddress, City, ZIP, State, Country\n' +
-            'FROM CustomerAddress NATURAL JOIN Address\n' +
+            'SELECT CustomerID, StreetAddress, City, ZIP, State, Country ' +
+            'FROM CustomerAddress NATURAL JOIN Address ' +
             'ORDER BY CustomerID';
 
         pool.query(query, (error, results) => {
@@ -92,8 +92,8 @@ router.get("/address", (request, response, next) => {
     }
 }, (request, response) => {
     const query =
-        'SELECT CustomerID, StreetAddress, City, ZIP, State, Country\n' +
-        'FROM CustomerAddress NATURAL JOIN Address\n' +
+        'SELECT CustomerID, StreetAddress, City, ZIP, State, Country ' +
+        'FROM CustomerAddress NATURAL JOIN Address ' +
         'WHERE CustomerID = ?';
     const values = [parseInt(request.query.id)];
 
@@ -174,12 +174,12 @@ router.post('/address', (request, response, next) => {
 }, (request, response, next) => {
     // see if address exists and get address id if it does, otherwise next
     const query =
-        'SELECT AddressID\n' +
-        'FROM Address\n' +
-        'WHERE StreetAddress = ?\n' +
-        '    AND City = ?\n' +
-        '    AND ZIP = ?\n' +
-        '    AND State = ?\n' +
+        'SELECT AddressID ' +
+        'FROM Address ' +
+        'WHERE StreetAddress = ? ' +
+        '    AND City = ? ' +
+        '    AND ZIP = ? ' +
+        '    AND State = ? ' +
         '    AND Country = ?';
 
     const values = [
@@ -204,8 +204,8 @@ router.post('/address', (request, response, next) => {
     } else {
         // create new address
         const insert =
-            'INSERT INTO Address\n' +
-            '    (StreetAddress, City, ZIP, State, Country)\n' +
+            'INSERT INTO Address ' +
+            '    (StreetAddress, City, ZIP, State, Country) ' +
             'VALUES (?, ?, ?, ?, ?)';
 
         const values = [
@@ -225,7 +225,7 @@ router.post('/address', (request, response, next) => {
 }, (request, response, next) => {
     // see if customer + address combo already exists
     const query =
-        'SELECT * FROM CustomerAddress\n' +
+        'SELECT * FROM CustomerAddress ' +
         'WHERE CustomerID = ? AND AddressID = ?';
     const values = [
         parseInt(request.body.id),
@@ -246,8 +246,8 @@ router.post('/address', (request, response, next) => {
 }, (request, response) => {
     // add to customer addresses
     const query =
-        'INSERT INTO CustomerAddress\n' +
-        '    (CustomerID, AddressID)\n' +
+        'INSERT INTO CustomerAddress ' +
+        '    (CustomerID, AddressID) ' +
         'VALUES (?, ?)';
     const values = [
         parseInt(request.body.id),

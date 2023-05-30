@@ -112,7 +112,7 @@ router.post('/', (request, response, next) => {
 }, (request, response) => {
     // add order and return order id
     const query =
-        'INSERT INTO Orders(StoreNumber, CustomerID, PickupMethod, PaymentMethod)\n' +
+        'INSERT INTO Orders(StoreNumber, CustomerID, PickupMethod, PaymentMethod) ' +
         'VALUES (?, ?, ?, ?)';
     const values = [
         parseInt(request.body.storeNumber),
@@ -195,7 +195,7 @@ router.post('/item', (request, response, next) => {
     });
 }, (request, response) => {
     const query =
-        'INSERT INTO OrderItems(OrderNumber, ItemNumber, Quantity, Modifications)\n' +
+        'INSERT INTO OrderItems(OrderNumber, ItemNumber, Quantity, Modifications) ' +
         'VALUES (?, ?, ?, ?)';
     const values = [
         parseInt(request.body.orderNumber),
