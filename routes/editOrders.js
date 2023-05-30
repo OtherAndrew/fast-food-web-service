@@ -1,6 +1,6 @@
 //express is the framework we're going to use to handle requests
 const express = require('express');
-const {isQuantityProvided, isStringProvided, notQuantityProvided} = require("../utilities/validationUtils");
+const {isStringProvided, notQuantityProvided} = require("../utilities/validationUtils");
 
 //Access the connection to Heroku Database
 const pool = require('../utilities/exports').pool;
@@ -20,12 +20,12 @@ const router = express.Router();
  * @apiSuccess {Boolean} success Request success.
  * @apiSuccess {Number} orderNumber The order number.
  *
- * @apiError (400: Missing Parameters) {String}  message "Missing required information."
+ * @apiError (400: Missing Parameters) {String} message  "Missing required information."
  * @apiError (400: Malformed Parameter) {String} message "Malformed parameter(s)."
  * @apiError (400: Malformed Parameter) {String} message "Invalid pickup method."
  * @apiError (400: Malformed Parameter) {String} message "Invalid payment method."
- * @apiError (404: Store Not Found) {String}     message "No stores found."
- * @apiError (404: Customer Not Found) {String}  message "No customers found."
+ * @apiError (404: Store Not Found) {String}  message    "No stores found."
+ * @apiError (404: Customer Not Found) {String} message  "No customers found."
  */
 router.post('/', (request, response, next) => {
     if (!request.body.storeNumber
@@ -142,11 +142,11 @@ router.post('/', (request, response, next) => {
  *
  * @apiSuccess {Boolean} success Request success.
  *
- * @apiError (400: Missing Parameters) {String}   message "Missing required information."
- * @apiError (400: Malformed Parameter) {String}  message "Malformed parameter. quantity must be a number."
- * @apiError (400: Malformed Parameter) {String}  message "Malformed parameter. modifications must be a string."
- * @apiError (404: Order Not Found) {String}      message "No orders found."
- * @apiError (404: Item Not Found) {String}       message "No items found."
+ * @apiError (400: Missing Parameters) {String} message  "Missing required information."
+ * @apiError (400: Malformed Parameter) {String} message "Malformed parameter. quantity must be a number."
+ * @apiError (400: Malformed Parameter) {String} message "Malformed parameter. modifications must be a string."
+ * @apiError (404: Order Not Found) {String} message     "No orders found."
+ * @apiError (404: Item Not Found) {String} message      "No items found."
  */
 router.post('/item', (request, response, next) => {
     if (!request.body.orderNumber || !request.body.itemNumber) {
@@ -223,8 +223,8 @@ router.post('/item', (request, response, next) => {
  * @apiSuccess {Boolean} success Request success.
  *
  * @apiError (400: Missing Parameters) {String} message "Missing required information."
- * @apiError (404: Order Not Found) {String}    message "No orders found."
- * @apiError (404: Item Not Found) {String}     message "No items found."
+ * @apiError (404: Order Not Found) {String} message    "No orders found."
+ * @apiError (404: Item Not Found) {String} message     "No items found."
  */
 router.delete('/item', (request, response, next) => {
     if (!request.query.orderNumber || !request.query.itemNumber) {
@@ -291,7 +291,7 @@ router.delete('/item', (request, response, next) => {
  * @apiSuccess {Boolean} success Request success.
  *
  * @apiError (400: Missing Parameters) {String} message "Missing required information."
- * @apiError (404: Order Not Found) {String}    message "No orders found."
+ * @apiError (404: Order Not Found) {String} message    "No orders found."
  */
 router.delete('/cancel', (request, response, next) => {
     if (!request.query.orderNumber) {

@@ -142,7 +142,7 @@ router.get("/items", (request, response, next) => {
  * @apiSuccess {String} OrderTime     Time order was placed.
  *
  * @apiError (400: Missing Parameters) {String} message "Missing required information."
- * @apiError (404: Order Not Found) {String}    message "No orders found."
+ * @apiError (404: Order Not Found) {String} message    "No orders found."
  */
 router.get("/customer", (request, response, next) => {
     if (request.query.id) {
