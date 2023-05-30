@@ -56,6 +56,63 @@ router.get("/", (request, response, next) => {
 });
 
 /**
+ * @api {get} /customers/address Request customer addresses.
+ * @apiName GetCustomerAddress
+ * @apiGroup Customers
+ *
+ * @apiParam {Number} id (Optional) The customer to find.
+ *
+ * @apiSuccess {Boolean} success      Request success.
+ * @apiSuccess {Object[]} addresses   List of customer addresses.
+ * @apiSuccess {Number} CustomerID    Customer ID.
+ * @apiSuccess {String} StreetAddress Customer street address.
+ * @apiSuccess {String} City          Customer city
+ * @apiSuccess {Number} ZIP           Customer ZIP
+ * @apiSuccess {String} State         Customer state.
+ * @apiSuccess {String} Country       Customer country
+ *
+ * @apiError (404: Address Not Found) {String} message "No addresses found."
+ */
+router.get("/address", (request, response, next) => {
+    if (isStringProvided(request.query.id)) {
+        next();
+    } else {
+        const query =
+            'SELECT CustomerID, StreetAddress, City, ZIP, State, Country\n' +
+            'FROM CustomerAddress NATURAL JOIN Address\n' +
+            'ORDER BY CustomerID';
+
+        pool.query(query, (error, results) => {
+            if (error) throw error;
+            response.send({
+                success: true,
+                addresses: results
+            });
+        });
+    }
+}, (request, response) => {
+    const query =
+        'SELECT CustomerID, StreetAddress, City, ZIP, State, Country\n' +
+        'FROM CustomerAddress NATURAL JOIN Address\n' +
+        'WHERE CustomerID = ?';
+    const values = [parseInt(request.query.id)];
+
+    pool.query(query, values, (error, results) => {
+        if (error) throw error;
+        if (results.length === 0) {
+            response.status(404).send({
+                message: "No addresses found."
+            });
+        } else {
+            response.send({
+                success: true,
+                addresses: results
+            });
+        }
+    });
+});
+
+/**
  * @api {post} /customers/address Request to add a customer address.
  * @apiName AddAddress
  * @apiGroup Customers
