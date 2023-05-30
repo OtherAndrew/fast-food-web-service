@@ -153,7 +153,7 @@ router.get("/drinks", (request, response) => {
  */
 router.get("/limited", (request, response) => {
     const query =
-        'SELECT ItemNumber, ItemName, Calories, Price ' +
+        'SELECT ItemNumber, ItemName, Season, Calories, Price ' +
         'FROM Items NATURAL JOIN LimitedItems NATURAL JOIN ItemNutrition ' +
         'ORDER BY ItemNumber';
     pool.query(query, (error, results) => {
@@ -204,7 +204,7 @@ router.get("/breakfast", (request, response) => {
  * @apiSuccess {Number} Calories   Item calories.
  * @apiSuccess {Number} PointCost  Item point cost.
  */
-router.get("/breakfast", (request, response) => {
+router.get("/rewards", (request, response) => {
     const query =
         'SELECT ItemNumber, ItemName, Calories, PointCost ' +
         'FROM Items NATURAL JOIN RewardItems NATURAL JOIN ItemNutrition ' +
