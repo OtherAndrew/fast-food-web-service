@@ -208,7 +208,7 @@ router.post('/item', (request, response, next) => {
         if (error) throw error;
         response.send({
             success: true
-        })
+        });
     });
 });
 
