@@ -88,7 +88,6 @@ router.get("/", (request, response, next) => {
  * @apiSuccess {Number} StoreNumber   Store order was placed at.
  * @apiSuccess {Number} CustomerID    Customer that the order belongs to.
  * @apiSuccess {String} PickupMethod  Pickup method of order.
- * @apiSuccess {String} PaymentMethod Payment method of order.
  * @apiSuccess {String} OrderTime     Time order was placed.
  *
  * @apiError (404: Item Not Found) {String} message "No items found."
@@ -98,7 +97,7 @@ router.get("/items", (request, response, next) => {
         next();
     } else {
         const query =
-          'SELECT OrderNumber, ItemNumber, StoreNumber, CustomerID, PickupMethod, PaymentMethod, OrderTime ' +
+          'SELECT OrderNumber, ItemNumber, ItemName, StoreNumber, CustomerID, PickupMethod, OrderTime ' +
           'FROM OrderItems NATURAL JOIN Items NATURAL JOIN Orders ' +
           'ORDER BY OrderNumber';
 
