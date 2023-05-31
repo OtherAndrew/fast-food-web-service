@@ -109,7 +109,10 @@ router.get("/items", (request, response, next) => {
         });
     }
 }, (request, response) => {
-    const query = 'SELECT * FROM OrderItems NATURAL JOIN Items WHERE OrderNumber = ?';
+    const query =
+      'SELECT OrderNumber, ItemNumber, ItemName, Quantity, Modifications ' +
+      'FROM OrderItems NATURAL JOIN Items ' +
+      'WHERE OrderNumber = ?';
     const values = [parseInt(request.query.orderNumber)];
 
     pool.query(query, values, (error, results) => {
