@@ -47,6 +47,14 @@ router.get("/", (request, response, next) => {
             });
         });
     }
+}, (request, response, next) => {
+    if (isNaN(request.query.orderNumber)) {
+        response.status(400).send({
+            message: "Malformed parameter."
+        });
+    } else {
+        next();
+    }
 }, (request, response) => {
     const query =
         'SELECT * ' +
