@@ -82,13 +82,12 @@ router.get("/", (request, response, next) => {
  * @apiParam {Number} orderNumber (Optional) The order to look up.
  *
  * @apiSuccess {Boolean} success      Request success.
- * @apiSuccess {Object[]} orders      List of orders.
+ * @apiSuccess {Object[]} items       List of items.
  * @apiSuccess {Number} OrderNumber   Order number.
  * @apiSuccess {Number} OrderNumber   Item number.
- * @apiSuccess {Number} StoreNumber   Store order was placed at.
- * @apiSuccess {Number} CustomerID    Customer that the order belongs to.
- * @apiSuccess {String} PickupMethod  Pickup method of order.
- * @apiSuccess {String} OrderTime     Time order was placed.
+ * @apiSuccess {String} ItemName      Name of item.
+ * @apiSuccess {Number} Quantity      Item quantity.
+ * @apiSuccess {String} Modifications Item modifications.
  *
  * @apiError (404: Item Not Found) {String} message "No items found."
  */
@@ -97,15 +96,15 @@ router.get("/items", (request, response, next) => {
         next();
     } else {
         const query =
-          'SELECT OrderNumber, ItemNumber, ItemName, StoreNumber, CustomerID, PickupMethod, OrderTime ' +
-          'FROM OrderItems NATURAL JOIN Items NATURAL JOIN Orders ' +
+          'SELECT OrderNumber, ItemNumber, ItemName, Quantity, Modifications ' +
+          'FROM OrderItems NATURAL JOIN Items ' +
           'ORDER BY OrderNumber';
 
         pool.query(query, (error, results) => {
             if (error) throw error;
             response.send({
                 success: true,
-                orders: results
+                items: results
             });
         });
     }
@@ -122,7 +121,7 @@ router.get("/items", (request, response, next) => {
         } else {
             response.send({
                 success: true,
-                orders: results
+                items: results
             });
         }
     });
