@@ -96,7 +96,10 @@ router.get("/items", (request, response, next) => {
     if (request.query.orderNumber) {
         next();
     } else {
-        const query = 'SELECT * FROM OrderItems NATURAL JOIN Items ORDER BY OrderNumber';
+        const query =
+          'SELECT OrderNumber, StoreNumber, CustomerID, PickupMethod, PaymentMethod, OrderTime ' +
+          'FROM OrderItems NATURAL JOIN Items NATURAL JOIN Orders ' +
+          'ORDER BY OrderNumber';
 
         pool.query(query, (error, results) => {
             if (error) throw error;
