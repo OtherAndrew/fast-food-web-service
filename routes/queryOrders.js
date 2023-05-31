@@ -84,6 +84,7 @@ router.get("/", (request, response, next) => {
  * @apiSuccess {Boolean} success      Request success.
  * @apiSuccess {Object[]} orders      List of orders.
  * @apiSuccess {Number} OrderNumber   Order number.
+ * @apiSuccess {Number} OrderNumber   Item number.
  * @apiSuccess {Number} StoreNumber   Store order was placed at.
  * @apiSuccess {Number} CustomerID    Customer that the order belongs to.
  * @apiSuccess {String} PickupMethod  Pickup method of order.
@@ -97,7 +98,7 @@ router.get("/items", (request, response, next) => {
         next();
     } else {
         const query =
-          'SELECT OrderNumber, StoreNumber, CustomerID, PickupMethod, PaymentMethod, OrderTime ' +
+          'SELECT OrderNumber, ItemNumber, StoreNumber, CustomerID, PickupMethod, PaymentMethod, OrderTime ' +
           'FROM OrderItems NATURAL JOIN Items NATURAL JOIN Orders ' +
           'ORDER BY OrderNumber';
 
