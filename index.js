@@ -3,20 +3,23 @@ const config = require("./config.js");
 //express is the framework we're going to use to handle requests
 const express = require("express");
 
+const cors = require('cors');
+
 //Create a new instance of express
 const app = express();
 
-const cors = require('cors');
-
-app.use(cors())
-
-//Access the connection to Heroku Database
-const pool = require("./utilities").pool;
-
 let middleware = require("./middleware");
 
+/**
+ * Express web server for database project.
+ *
+ * @author Andrew Nguyen
+ */
+
+app.use(cors());
+
 /*
- * This middleware function parses JASOn in the body of POST requests
+ * This middleware function parses JSON in the body of POST requests
  */
 app.use(express.json());
 
